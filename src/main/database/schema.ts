@@ -72,6 +72,7 @@ CREATE INDEX IF NOT EXISTS idx_browser_commands_status ON browser_commands(statu
 `
 
 export const DEFAULT_CONFIG: Record<string, string> = {
+  language: 'zh',
   external_api_url: '',
   external_api_key: '',
   polling_url: '',

@@ -16,7 +16,7 @@
             </span>
             <span v-else-if="col.key === 'pushed'">
               <span class="badge" :class="{ 'badge-filled': getCellValue(row, col.key) }">
-                {{ getCellValue(row, col.key) ? 'YES' : 'NO' }}
+                {{ getCellValue(row, col.key) ? t('events.yes') : t('events.no') }}
               </span>
             </span>
             <span v-else>{{ formatValue(getCellValue(row, col.key)) }}</span>
@@ -26,22 +26,26 @@
     </table>
     <div v-else class="empty-state">
       <div class="empty-state-icon">[ ]</div>
-      <div class="empty-state-text">No data</div>
+      <div class="empty-state-text">{{ t('table.noData') }}</div>
     </div>
 
     <div v-if="rows.length > 0" class="flex items-center justify-between mt-4">
       <span style="font-size: 11px; color: var(--gray-500);">
-        Showing {{ rows.length }} records
+        {{ t('table.showing') }} {{ rows.length }} {{ t('table.records') }}
       </span>
       <div class="flex gap-2">
-        <button class="btn btn-sm" :disabled="page <= 1" @click="$emit('page', page - 1)">PREV</button>
-        <button class="btn btn-sm" :disabled="rows.length < pageSize" @click="$emit('page', page + 1)">NEXT</button>
+        <button class="btn btn-sm" :disabled="page <= 1" @click="$emit('page', page - 1)">{{ t('table.prev') }}</button>
+        <button class="btn btn-sm" :disabled="rows.length < pageSize" @click="$emit('page', page + 1)">{{ t('table.next') }}</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from '../composables/useI18n'
+
+const { t } = useI18n()
+
 defineProps<{
   columns: { key: string; label: string; width?: string }[]
   rows: Record<string, unknown>[]

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <style>
@@ -26,6 +26,29 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lang-toggle {
+      padding: 1px 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      background: transparent;
+      color: #999;
+      border: 1px solid #666;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .lang-toggle:hover {
+      color: #fff;
+      border-color: #fff;
     }
 
     .status-badge {
@@ -130,32 +153,35 @@
 <body>
   <div class="header">
     <span>PC Agent</span>
-    <span id="statusBadge" class="status-badge">OFFLINE</span>
+    <div class="header-right">
+      <button class="lang-toggle" id="btnLang">EN</button>
+      <span id="statusBadge" class="status-badge">OFFLINE</span>
+    </div>
   </div>
 
   <div class="content">
     <div class="section">
-      <div class="section-title">Current Page</div>
+      <div class="section-title" data-i18n="currentPage"></div>
       <div class="info-row">
         <span class="info-label">URL</span>
         <span class="info-value" id="pageUrl">-</span>
       </div>
       <div class="info-row">
-        <span class="info-label">Title</span>
+        <span class="info-label" data-i18n="titleLabel"></span>
         <span class="info-value" id="pageTitle">-</span>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-title">Actions</div>
-      <button class="btn" id="btnReport">Report Page Info</button>
-      <button class="btn" id="btnRefresh">Refresh Status</button>
+      <div class="section-title" data-i18n="actions"></div>
+      <button class="btn" id="btnReport" data-i18n="reportPage"></button>
+      <button class="btn" id="btnRefresh" data-i18n="refreshStatus"></button>
     </div>
 
     <div class="section">
-      <div class="section-title">Recent Activity</div>
+      <div class="section-title" data-i18n="recentActivity"></div>
       <div class="log" id="activityLog">
-        <div class="log-entry">Waiting...</div>
+        <div class="log-entry" data-i18n="waiting"></div>
       </div>
     </div>
   </div>

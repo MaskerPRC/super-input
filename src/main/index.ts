@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, Tray, nativeImage } from 'electron'
+import { app, BrowserWindow, Menu, Tray, nativeImage, ipcMain } from 'electron'
 import path from 'path'
 import { initDatabase, closeDatabase, cleanOldLogs, getConfig } from './database'
 import { setMainWindow } from './event-dispatcher'
@@ -17,12 +17,6 @@ function createWindow(): void {
     minWidth: 900,
     minHeight: 600,
     frame: false,
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#000000',
-      symbolColor: '#ffffff',
-      height: 36
-    },
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -67,11 +61,15 @@ function createTray(): void {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Show',
-      click: () => mainWindow?.show()
+      label: 'Show / 显示',
+      click: () => {
+        mainWindow?.show()
+        mainWindow?.focus()
+      }
     },
+    { type: 'separator' },
     {
-      label: 'Quit',
+      label: 'Quit / 退出',
       click: () => {
         app.isQuitting = true
         app.quit()
@@ -80,7 +78,41 @@ function createTray(): void {
   ])
 
   tray.setContextMenu(contextMenu)
-  tray.on('double-click', () => mainWindow?.show())
+  tray.on('double-click', () => {
+    mainWindow?.show()
+    mainWindow?.focus()
+  })
+}
+
+function setupWindowIpc(): void {
+  // Minimize to tray
+  ipcMain.handle('window:minimize-to-tray', () => {
+    mainWindow?.hide()
+    return true
+  })
+  // Minimize
+  ipcMain.handle('window:minimize', () => {
+    mainWindow?.minimize()
+    return true
+  })
+  // Maximize / restore
+  ipcMain.handle('window:toggle-maximize', () => {
+    if (mainWindow?.isMaximized()) {
+      mainWindow.restore()
+    } else {
+      mainWindow?.maximize()
+    }
+    return mainWindow?.isMaximized() ?? false
+  })
+  // Close (hide to tray)
+  ipcMain.handle('window:close', () => {
+    mainWindow?.hide()
+    return true
+  })
+  // Check if maximized
+  ipcMain.handle('window:is-maximized', () => {
+    return mainWindow?.isMaximized() ?? false
+  })
 }
 
 // Extend app type to include isQuitting flag
@@ -103,6 +135,7 @@ app.whenReady().then(async () => {
 
   // 3. Setup IPC handlers
   setupIpcHandlers()
+  setupWindowIpc()
   console.log('[App] IPC handlers registered')
 
   // 4. Start monitors

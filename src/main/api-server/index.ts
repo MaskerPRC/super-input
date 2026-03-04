@@ -4,6 +4,7 @@ import { getConfig } from '../database'
 import actionsRouter from './routes/actions'
 import statusRouter from './routes/status'
 import browserRouter from './routes/browser'
+import docsRouter from './routes/docs'
 
 let server: ReturnType<typeof express.application.listen> | null = null
 
@@ -31,6 +32,7 @@ export function startApiServer(): Promise<number> {
     })
 
     // Routes
+    app.use('/api/docs', docsRouter)
     app.use('/api/actions', actionsRouter)
     app.use('/api/status', statusRouter)
     app.use('/api/browser', browserRouter)

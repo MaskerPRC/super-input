@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="page-header">
-      <h1 class="page-title">Event Log</h1>
-      <p class="page-subtitle">System events captured by monitors</p>
+      <h1 class="page-title">{{ t('events.title') }}</h1>
+      <p class="page-subtitle">{{ t('events.subtitle') }}</p>
     </div>
 
     <div class="filter-bar">
@@ -10,16 +10,16 @@
         class="filter-chip"
         :class="{ active: !filterType }"
         @click="filterType = ''"
-      >ALL</button>
+      >{{ t('events.all') }}</button>
       <button
-        v-for="t in eventTypes"
-        :key="t"
+        v-for="type in eventTypes"
+        :key="type"
         class="filter-chip"
-        :class="{ active: filterType === t }"
-        @click="filterType = t"
-      >{{ t }}</button>
+        :class="{ active: filterType === type }"
+        @click="filterType = type"
+      >{{ type }}</button>
       <div style="flex: 1;"></div>
-      <button class="btn btn-sm" @click="loadData">REFRESH</button>
+      <button class="btn btn-sm" @click="loadData">{{ t('events.refresh') }}</button>
     </div>
 
     <LogTable
@@ -33,19 +33,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useElectron } from '../composables/useElectron'
+import { useI18n } from '../composables/useI18n'
 import LogTable from '../components/LogTable.vue'
 
+const { t } = useI18n()
 const api = useElectron()
 
-const columns = [
-  { key: 'id', label: 'ID', width: '60px' },
-  { key: 'event_type', label: 'Type', width: '100px' },
-  { key: 'event_data', label: 'Data' },
-  { key: 'pushed', label: 'Pushed', width: '80px' },
-  { key: 'created_at', label: 'Time', width: '160px' }
-]
+const columns = computed(() => [
+  { key: 'id', label: t('events.id'), width: '60px' },
+  { key: 'event_type', label: t('events.type'), width: '100px' },
+  { key: 'event_data', label: t('events.data') },
+  { key: 'pushed', label: t('events.pushed'), width: '80px' },
+  { key: 'created_at', label: t('events.time'), width: '160px' }
+])
 
 const eventTypes = ['clipboard', 'window', 'power', 'lock', 'usb', 'network', 'idle', 'browser']
 

@@ -2,21 +2,21 @@
   <div>
     <div class="page-header flex items-center justify-between">
       <div>
-        <h1 class="page-title">Polling</h1>
-        <p class="page-subtitle">External service polling status and history</p>
+        <h1 class="page-title">{{ t('polling.title') }}</h1>
+        <p class="page-subtitle">{{ t('polling.subtitle') }}</p>
       </div>
       <div class="flex gap-2">
         <button class="btn" :class="{ 'btn-primary': !pollingActive }" @click="togglePolling">
-          {{ pollingActive ? 'STOP POLLING' : 'START POLLING' }}
+          {{ pollingActive ? t('polling.stop') : t('polling.start') }}
         </button>
-        <button class="btn btn-sm" @click="loadData">REFRESH</button>
+        <button class="btn btn-sm" @click="loadData">{{ t('polling.refresh') }}</button>
       </div>
     </div>
 
     <div class="stat-grid">
-      <StatCard :value="pollingActive ? 'ACTIVE' : 'STOPPED'" label="Status" />
-      <StatCard :value="pollingUrl || 'NOT SET'" label="Endpoint" />
-      <StatCard :value="rows.length" label="Log Entries" />
+      <StatCard :value="pollingActive ? t('polling.active') : t('polling.stopped')" :label="t('polling.status')" />
+      <StatCard :value="pollingUrl || t('polling.notSet')" :label="t('polling.endpoint')" />
+      <StatCard :value="rows.length" :label="t('polling.logEntries')" />
     </div>
 
     <LogTable
@@ -30,21 +30,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useElectron } from '../composables/useElectron'
+import { useI18n } from '../composables/useI18n'
 import StatCard from '../components/StatCard.vue'
 import LogTable from '../components/LogTable.vue'
 
+const { t } = useI18n()
 const api = useElectron()
 
-const columns = [
-  { key: 'id', label: 'ID', width: '60px' },
-  { key: 'request_url', label: 'URL', width: '200px' },
-  { key: 'response_status', label: 'Status', width: '80px' },
-  { key: 'commands_count', label: 'Cmds', width: '60px' },
-  { key: 'response_body', label: 'Response' },
-  { key: 'created_at', label: 'Time', width: '160px' }
-]
+const columns = computed(() => [
+  { key: 'id', label: t('polling.id'), width: '60px' },
+  { key: 'request_url', label: t('polling.url'), width: '200px' },
+  { key: 'response_status', label: t('polling.responseStatus'), width: '80px' },
+  { key: 'commands_count', label: t('polling.cmds'), width: '60px' },
+  { key: 'response_body', label: t('polling.response') },
+  { key: 'created_at', label: t('polling.time'), width: '160px' }
+])
 
 const rows = ref<Record<string, unknown>[]>([])
 const page = ref(1)

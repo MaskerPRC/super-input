@@ -43,6 +43,13 @@ const electronAPI = {
   // Cleanup
   cleanupLogs: () => ipcRenderer.invoke('logs:cleanup'),
 
+  // Window Control
+  windowMinimize: () => ipcRenderer.invoke('window:minimize'),
+  windowToggleMaximize: () => ipcRenderer.invoke('window:toggle-maximize'),
+  windowClose: () => ipcRenderer.invoke('window:close'),
+  windowMinimizeToTray: () => ipcRenderer.invoke('window:minimize-to-tray'),
+  windowIsMaximized: () => ipcRenderer.invoke('window:is-maximized'),
+
   // System Event Listener
   onSystemEvent: (callback: (event: unknown) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, data: unknown) => callback(data)

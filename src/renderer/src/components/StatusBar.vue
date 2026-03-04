@@ -2,15 +2,15 @@
   <div class="status-bar">
     <div class="status-item">
       <div class="status-dot" :class="{ active: apiActive }"></div>
-      <span>API</span>
+      <span>{{ t('status.api') }}</span>
     </div>
     <div class="status-item">
       <div class="status-dot" :class="{ active: pollingActive }"></div>
-      <span>POLLING</span>
+      <span>{{ t('status.polling') }}</span>
     </div>
     <div class="status-item">
       <div class="status-dot" :class="{ active: monitorsCount > 0 }"></div>
-      <span>MONITORS: {{ monitorsCount }}</span>
+      <span>{{ t('status.monitors') }}: {{ monitorsCount }}</span>
     </div>
     <div style="flex:1"></div>
     <div class="status-item">
@@ -22,7 +22,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useElectron } from '../composables/useElectron'
+import { useI18n } from '../composables/useI18n'
 
+const { t } = useI18n()
 const apiActive = ref(true)
 const pollingActive = ref(false)
 const monitorsCount = ref(0)

@@ -45,6 +45,61 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Titlebar (draggable area) ── */
+.titlebar {
+  height: var(--titlebar-height);
+  background: var(--fg);
+  -webkit-app-region: drag;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 16px;
+}
+
+.titlebar-title {
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  opacity: 0.6;
+}
+
+.titlebar-controls {
+  display: flex;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  width: 46px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--bg);
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.titlebar-btn:hover {
+  background: rgba(255,255,255,0.15);
+  opacity: 1;
+}
+
+.titlebar-btn-close:hover {
+  background: #c42b1c;
+  opacity: 1;
+}
+
 /* ── Layout ── */
 .app-layout {
   display: flex;
@@ -61,6 +116,7 @@ body {
   flex-direction: column;
   border-right: var(--border);
   user-select: none;
+  -webkit-app-region: no-drag;
 }
 
 .app-content {
@@ -68,6 +124,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  -webkit-app-region: no-drag;
 }
 
 .app-main {

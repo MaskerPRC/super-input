@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="page-header">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">System monitor overview</p>
+      <h1 class="page-title">{{ t('dashboard.title') }}</h1>
+      <p class="page-subtitle">{{ t('dashboard.subtitle') }}</p>
     </div>
 
     <div class="stat-grid">
-      <StatCard :value="stats.todayEvents" label="Today Events" />
-      <StatCard :value="stats.todayActions" label="Today Actions" />
-      <StatCard :value="stats.totalEvents" label="Total Events" />
-      <StatCard :value="stats.totalActions" label="Total Actions" />
+      <StatCard :value="stats.todayEvents" :label="t('dashboard.todayEvents')" />
+      <StatCard :value="stats.todayActions" :label="t('dashboard.todayActions')" />
+      <StatCard :value="stats.totalEvents" :label="t('dashboard.totalEvents')" />
+      <StatCard :value="stats.totalActions" :label="t('dashboard.totalActions')" />
     </div>
 
     <div class="card">
-      <div class="card-title">Monitor Status</div>
+      <div class="card-title">{{ t('dashboard.monitorStatus') }}</div>
       <div class="flex gap-3" style="flex-wrap: wrap;">
         <div
           v-for="(active, name) in monitors"
@@ -30,7 +30,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Event Distribution</div>
+      <div class="card-title">{{ t('dashboard.eventDistribution') }}</div>
       <div class="flex gap-3" style="flex-wrap: wrap;">
         <div
           v-for="item in stats.eventsByType"
@@ -44,14 +44,14 @@
         </div>
       </div>
       <div v-if="!stats.eventsByType?.length" class="empty-state" style="padding: 24px;">
-        <div class="empty-state-text">No events yet</div>
+        <div class="empty-state-text">{{ t('dashboard.noEvents') }}</div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title flex items-center justify-between">
-        <span>Live Events</span>
-        <span class="badge badge-filled">REAL-TIME</span>
+        <span>{{ t('dashboard.liveEvents') }}</span>
+        <span class="badge badge-filled">{{ t('dashboard.realtime') }}</span>
       </div>
       <div style="max-height: 300px; overflow-y: auto;">
         <div
@@ -64,7 +64,7 @@
           <span style="margin-left: 8px;">{{ truncate(JSON.stringify((event as any).data)) }}</span>
         </div>
         <div v-if="liveEvents.length === 0" style="padding: 16px; text-align: center; color: var(--gray-400);">
-          Waiting for events...
+          {{ t('dashboard.waiting') }}
         </div>
       </div>
     </div>
@@ -74,8 +74,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useElectron, useSystemEvents } from '../composables/useElectron'
+import { useI18n } from '../composables/useI18n'
 import StatCard from '../components/StatCard.vue'
 
+const { t } = useI18n()
 const api = useElectron()
 const { events: liveEvents } = useSystemEvents()
 

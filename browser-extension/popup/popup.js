@@ -1,10 +1,58 @@
-// PC Agent Browser Extension - Popup Script
+// PC Agent Browser Extension - Popup Script (Bilingual)
+
+const i18n = {
+  zh: {
+    online: '在线',
+    offline: '离线',
+    error: '错误',
+    currentPage: '当前页面',
+    titleLabel: '标题',
+    actions: '操作',
+    reportPage: '上报页面信息',
+    refreshStatus: '刷新状态',
+    recentActivity: '最近活动',
+    waiting: '等待中...',
+    pageReported: '页面信息已上报',
+    statusRefreshed: '状态已刷新',
+    popupOpened: '弹窗已打开',
+  },
+  en: {
+    online: 'ONLINE',
+    offline: 'OFFLINE',
+    error: 'ERROR',
+    currentPage: 'Current Page',
+    titleLabel: 'Title',
+    actions: 'Actions',
+    reportPage: 'Report Page Info',
+    refreshStatus: 'Refresh Status',
+    recentActivity: 'Recent Activity',
+    waiting: 'Waiting...',
+    pageReported: 'Page info reported',
+    statusRefreshed: 'Status refreshed',
+    popupOpened: 'Popup opened',
+  }
+};
+
+let currentLang = localStorage.getItem('pc-agent-lang') || 'zh';
+
+function t(key) {
+  return i18n[currentLang]?.[key] || i18n.en[key] || key;
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  btnLang.textContent = currentLang === 'zh' ? 'EN' : '中文';
+}
 
 const statusBadge = document.getElementById('statusBadge');
 const pageUrl = document.getElementById('pageUrl');
 const pageTitle = document.getElementById('pageTitle');
 const btnReport = document.getElementById('btnReport');
 const btnRefresh = document.getElementById('btnRefresh');
+const btnLang = document.getElementById('btnLang');
 const activityLog = document.getElementById('activityLog');
 
 const logs = [];
@@ -20,14 +68,14 @@ async function refreshStatus() {
   try {
     const response = await chrome.runtime.sendMessage({ type: 'get-status' });
     if (response.connected) {
-      statusBadge.textContent = 'ONLINE';
+      statusBadge.textContent = t('online');
       statusBadge.classList.add('connected');
     } else {
-      statusBadge.textContent = 'OFFLINE';
+      statusBadge.textContent = t('offline');
       statusBadge.classList.remove('connected');
     }
   } catch {
-    statusBadge.textContent = 'ERROR';
+    statusBadge.textContent = t('error');
     statusBadge.classList.remove('connected');
   }
 }
@@ -49,7 +97,7 @@ async function refreshPageInfo() {
 btnReport.addEventListener('click', async () => {
   try {
     await chrome.runtime.sendMessage({ type: 'report-page' });
-    addLog('Page info reported');
+    addLog(t('pageReported'));
   } catch (err) {
     addLog(`Error: ${err.message}`);
   }
@@ -58,10 +106,18 @@ btnReport.addEventListener('click', async () => {
 btnRefresh.addEventListener('click', () => {
   refreshStatus();
   refreshPageInfo();
-  addLog('Status refreshed');
+  addLog(t('statusRefreshed'));
+});
+
+btnLang.addEventListener('click', () => {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('pc-agent-lang', currentLang);
+  applyI18n();
+  refreshStatus();
 });
 
 // Initialize
+applyI18n();
 refreshStatus();
 refreshPageInfo();
-addLog('Popup opened');
+addLog(t('popupOpened'));

@@ -1,0 +1,86 @@
+{
+  "name": "PC Agent - 轮询指令中心",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "pc-agent/commands",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-poll",
+      "name": "接收轮询请求",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "pc-agent-poll"
+    },
+    {
+      "parameters": {
+        "functionCode": "// ====== 在这里定义要下发给 PC Agent 的指令 ======\n// PC Agent 每隔几秒 GET 这个接口，拿到 commands 数组后逐个执行\n// 你可以从数据库、其他API、或直接硬编码指令\n\n// 示例：返回一组待执行指令\nconst commands = [\n  {\n    \"action\": \"notification\",\n    \"data\": {\n      \"title\": \"来自 n8n\",\n      \"body\": \"这是一条通过轮询下发的通知消息\"\n    }\n  }\n];\n\n// 返回空数组 = 无指令\n// return [{ json: { commands: [] } }];\n\nreturn [{ json: { commands } }];"
+      },
+      "id": "build-commands",
+      "name": "构建指令列表",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "respond-poll",
+      "name": "返回指令",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pc-agent/events",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-events",
+      "name": "接收系统事件",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 560],
+      "webhookId": "pc-agent-events"
+    },
+    {
+      "parameters": {
+        "functionCode": "// 收到 PC Agent 推送的系统事件\nconst event = $input.first().json;\n\nconsole.log('收到事件:', event.event_type);\nconsole.log('事件数据:', JSON.stringify(event.event_data));\n\n// 你可以在这里添加处理逻辑:\n// - 存入数据库\n// - 发送到 Slack/微信\n// - 触发其他 workflow\n// - 根据事件类型做条件分支\n\nreturn [{ json: { received: true, event_type: event.event_type } }];"
+      },
+      "id": "process-event",
+      "name": "处理事件",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [480, 560]
+    }
+  ],
+  "connections": {
+    "接收轮询请求": {
+      "main": [
+        [{ "node": "构建指令列表", "type": "main", "index": 0 }]
+      ]
+    },
+    "构建指令列表": {
+      "main": [
+        [{ "node": "返回指令", "type": "main", "index": 0 }]
+      ]
+    },
+    "接收系统事件": {
+      "main": [
+        [{ "node": "处理事件", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [{ "name": "PC Agent" }]
+}
