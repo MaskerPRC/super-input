@@ -150,10 +150,7 @@ const DOCS_HTML = `<!DOCTYPE html>
       <div class="field"><label>width</label><input type="number" id="dialog-width" value="420" /><div class="hint">弹窗宽度 px</div></div>
       <div class="field"><label>height</label><input type="number" id="dialog-height" value="260" /><div class="hint">弹窗高度 px</div></div>
     </div>
-    <div class="row">
-      <div class="field" style="display:flex;align-items:center;gap:8px"><label style="margin:0">alwaysOnTop</label><input type="checkbox" id="dialog-ontop" style="width:auto" /><span class="hint">持续置顶 / Always on top</span></div>
-      <div class="field" style="display:flex;align-items:center;gap:8px"><label style="margin:0">silent</label><input type="checkbox" id="dialog-silent" style="width:auto" /><span class="hint">不弹出主窗口 (仅原生弹窗)</span></div>
-    </div>
+    <div class="field" style="display:flex;align-items:center;gap:8px"><label style="margin:0">alwaysOnTop</label><input type="checkbox" id="dialog-ontop" style="width:auto" /><span class="hint">持续置顶 / Always on top</span></div>
     <button class="btn" onclick="sendDialog(this)">SEND</button>
     <div class="response-area"><div class="response-header"><span>Response</span><span class="status-code"></span></div><div class="response-body"></div></div>
   </div>
@@ -362,7 +359,6 @@ function sendDialog(btn){
   const w=parseInt(v('dialog-width'));if(w&&w!==420)body.width=w;
   const h=parseInt(v('dialog-height'));if(h&&h!==260)body.height=h;
   if(document.getElementById('dialog-ontop').checked)body.alwaysOnTop=true;
-  if(document.getElementById('dialog-silent').checked)body.silent=true;
   sendReq(btn,'POST','/api/actions/dialog',body);
 }
 </script>

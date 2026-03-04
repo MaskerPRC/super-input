@@ -1,4 +1,4 @@
-import { Notification, dialog, clipboard, shell, BrowserWindow, desktopCapturer } from 'electron'
+import { Notification, clipboard, shell, desktopCapturer } from 'electron'
 import { insertActionLog } from '../../database'
 import { showCustomDialog } from './custom-dialog'
 import type { Request, Response } from 'express'
@@ -18,52 +18,31 @@ export async function handleNotification(req: Request, res: Response): Promise<v
 }
 
 export async function handleDialog(req: Request, res: Response): Promise<void> {
-  const { type = 'info', title, message, buttons, detail, silent, alwaysOnTop, position, width, height } = req.body
+  const { type = 'info', title, message, buttons, detail, alwaysOnTop, position, width, height } = req.body
   if (!title || !message) {
     res.status(400).json({ error: 'title and message are required' })
     return
   }
 
-  // Use custom dialog when position or alwaysOnTop is specified
-  if (position || alwaysOnTop) {
-    try {
-      const result = await showCustomDialog({
-        type: type as 'info' | 'warning' | 'error' | 'question',
-        title,
-        message,
-        detail,
-        buttons: buttons || ['OK'],
-        alwaysOnTop: !!alwaysOnTop,
-        position: position || 'center',
-        width,
-        height
-      })
-      const actionResult = { response: result.response, buttonLabel: result.buttonLabel }
-      insertActionLog('dialog', req.body, req.headers['x-source'] as string || 'local-api', actionResult)
-      res.json({ success: true, ...actionResult })
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : String(err)
-      res.status(500).json({ error: errMsg })
-    }
-    return
-  }
-
-  // Fallback to native dialog
-  const win = silent ? null : (BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0] || null)
-  const result = await dialog.showMessageBox(
-    ...(win ? [win] : []) as [Electron.BrowserWindow],
-    {
+  try {
+    const result = await showCustomDialog({
       type: type as 'info' | 'warning' | 'error' | 'question',
       title,
       message,
       detail,
-      buttons: buttons || ['OK']
-    }
-  )
-
-  const actionResult = { response: result.response, checkboxChecked: result.checkboxChecked }
-  insertActionLog('dialog', req.body, req.headers['x-source'] as string || 'local-api', actionResult)
-  res.json({ success: true, ...actionResult })
+      buttons: buttons || ['OK'],
+      alwaysOnTop: !!alwaysOnTop,
+      position: position || 'center',
+      width,
+      height
+    })
+    const actionResult = { response: result.response, buttonLabel: result.buttonLabel }
+    insertActionLog('dialog', req.body, req.headers['x-source'] as string || 'local-api', actionResult)
+    res.json({ success: true, ...actionResult })
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err)
+    res.status(500).json({ error: errMsg })
+  }
 }
 
 export async function handleClipboardWrite(req: Request, res: Response): Promise<void> {
