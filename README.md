@@ -1,8 +1,8 @@
 # PC Agent
 
-> Desktop system monitor & control agent — Neo-Brutalist black/white theme
+[中文文档](README.zh-CN.md) | English
 
-PC Agent 是一个基于 Electron 的桌面代理应用，用于监控 PC 系统事件并通过本地 REST API 触发各种操作。设计上支持与 n8n 等自动化平台集成，实现 PC 端的远程控制与事件推送。
+> Desktop system monitor & control agent — Neo-Brutalist black/white theme
 
 PC Agent is an Electron-based desktop agent that monitors PC system events and triggers actions via a local REST API. Designed for integration with automation platforms like n8n for remote PC control and event pushing.
 
