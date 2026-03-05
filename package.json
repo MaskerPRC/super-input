@@ -2,6 +2,10 @@
   "name": "pc-agent",
   "version": "1.0.0",
   "description": "PC System Monitor & Control Agent",
+  "author": {
+    "name": "PC Agent",
+    "email": "pc-agent@example.com"
+  },
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
@@ -55,7 +59,8 @@
     },
     "linux": {
       "target": ["AppImage", "deb"],
-      "icon": "resources/icon.png"
+      "icon": "resources/icon.png",
+      "category": "Utility"
     },
     "nsis": {
       "oneClick": false,
